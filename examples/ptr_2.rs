@@ -32,10 +32,29 @@ fn attacker() {
     }
 }
 
+fn rust_attacker(buf: String) {
+    unsafe {
+        println!("attacker (0x{:x}): {:X?}", buf.as_ptr() as usize, buf.as_bytes());
+    }
+}
+
 fn main() {
+    // C - style
     let victim_handle = spawn(cstyle_victim);
     println!("Type something:");
     victim_handle.join().unwrap();
     let attacker_handle = spawn(attacker);
     attacker_handle.join().unwrap();
+
+    /*
+    // Rust style
+    let buf = String::new();
+    let victim_handle = spawn(|| rust_victim(buf));
+    println!("Type something:");
+    victim_handle.join().unwrap();
+
+    // Rust will not let this compile since ownership of "buf" was moved into the victim
+    // thread!
+    rust_attacker(buf);
+    */
 }
