@@ -54,7 +54,8 @@ fn main() {
     victim_handle.join().unwrap();
 
     // Rust will not let this compile since ownership of "buf" was moved into the victim
-    // thread!
+    // thread! In this case, the victim function can require that the data it operates on
+    // is only owned by itself, guaranteeing memory safety!
     rust_attacker(buf);
     */
 }
