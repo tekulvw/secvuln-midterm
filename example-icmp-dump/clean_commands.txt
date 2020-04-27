@@ -1,0 +1,9 @@
+# First, find which 'bucket' (log files are collected by timestamp on the hour)
+# the ssh key data is in:
+grep '@@@@@' *.txt
+
+# Next, to piece together the ssh key data from the raw log txt dumps:
+awk NF icmp-listener-<timestamp>.txt > cleaned-icmp-listener-<timestamp>.txt
+grep -v '^Source Address' cleaned-icmp-listener-<timestamp>.txt > cleaned-dump-<timestamp>.txt
+
+# Now you have the raw ssh key files!
