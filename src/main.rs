@@ -1,8 +1,8 @@
-use pnet::packet::icmp::{echo_request::MutableEchoRequestPacket, IcmpCode, IcmpPacket, IcmpTypes};
+use pnet::packet::icmp::{echo_request::MutableEchoRequestPacket, IcmpTypes};
 use pnet::packet::ip::IpNextHeaderProtocols;
 use pnet::packet::ipv4::MutableIpv4Packet;
 use pnet::packet::Packet;
-use pnet::transport::{icmp_packet_iter, transport_channel, TransportChannelType::Layer3};
+use pnet::transport::{transport_channel, TransportChannelType::Layer3};
 
 use dirs;
 use rand;
@@ -22,9 +22,9 @@ const ICMP_PAYLOAD_LEN: usize = 32;
 
 fn attempt_false_icmp(msg: &[u8]) -> Result<(), ()> {
     let protocol = Layer3(IpNextHeaderProtocols::Icmp);
-    let (mut tx, mut rx) = transport_channel(2048, protocol).unwrap();
+    let (mut tx, _) = transport_channel(2048, protocol).unwrap();
 
-    let mut rx = icmp_packet_iter(&mut rx);
+    // let mut rx = icmp_packet_iter(&mut rx);
 
     let ip_addr = net::Ipv4Addr::from_str("174.138.54.196").unwrap();
 
